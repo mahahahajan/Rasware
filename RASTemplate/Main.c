@@ -2,23 +2,67 @@
 #include <RASLib/inc/gpio.h>
 #include <RASLib/inc/time.h>
 
+
+#include <RASLib/inc/adc.h>
+#include <RASLib/inc/motor.h>
+
 // Blink the LED to show we're on
 tBoolean blink_on = true;
+static tBoolean initialized = false;
+static tMotor *left1;
+static tMotor *right1;
+static tMotor *left2;
+static tMotor *right2;
 
-void blink(void) {
-    SetPin(PIN_F3, blink_on);
-    blink_on = !blink_on;
-}
+static tADC *adc[4];
+
+
+
 
 
 // The 'main' function is the entry point of the program
 int main(void) {
     // Initialization code can go here
-    CallEvery(blink, 0, 0.5);
-    
-    while (1) {
-        // Runtime code can go here
-        Printf("Hello World!\n");
-        
+    left1 = InitializeServoMotor(PIN_B6, true);
+    left2 = InitializeServoMotor(PIN_B7, true);
+    right1 = InitializeServoMotor(PIN_D6, true);
+    right2 = InitializeServoMotor(PIN_D7, true);
+
+    SetMotor(left1, 1.0);
+    SetMotor(left2, 1.0);
+    SetMotor(right2, -1.0);
+    SetMotor(right1, -1.0);
+    initGPIOLineSensor();
+    gpioLineSensorDemo();
+   
+}
+
+void initGPIOLineSensor(void){
+    if(initialized){
+        return;
     }
+    initialized = true;
+
+    //set four pins for ADC input - you can use these 4 I/O pins or select your own
+    adc[0] = InitializeADC(PIN_D0);
+    adc[1] = InitializeADC(PIN_D1);
+    adc[2] = InitializeADC(PIN_D2);
+    adc[3] = InitializeADC(PIN_D3);
+}
+
+
+void gpioLineSensorDemo(void){
+    Printf("Press any key to quit\n");
+
+    //loop until key is pressed
+    while(!KeyWasPressed()){
+        Printf(
+            "Line Sensor values:  %1.3f,  %1.3f,  %1.3f,  %1.3f\r",
+            ADCRead(adc[0]),
+            ADCRead(adc[1]),
+            ADCRead(adc[2]),
+            ADCRead(adc[3])
+            );
+    }
+    Printf("\n");
 }
