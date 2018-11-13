@@ -28,16 +28,42 @@ int main(void) {
     right1 = InitializeServoMotor(PIN_D6, true);
     right2 = InitializeServoMotor(PIN_D7, true);
 
-    SetMotor(left1, 1.0);
-    SetMotor(left2, 1.0);
-    SetMotor(right2, -1.0);
-    SetMotor(right1, -1.0);
+    /* this keeps going forward 
+        SetMotor(left1, 1.0);
+        SetMotor(left2, 1.0);
+        SetMotor(right2, -1.0);
+        SetMotor(right1, -1.0);
+    */
+
+
+
     initGPIOLineSensor();
+
+    lineSense();
+
+
     gpioLineSensorDemo();
    
 }
 
-void initGPIOLineSensor(void){
+void lineSense() {
+    while(1){
+        if(ADCRead(adc[0]) > .9){
+            SetPin(PIN_F2, true);
+        }
+        else if(ADCRead(adc[0]) > .4){
+             SetPin(PIN_F1, true);
+        }
+
+    Printf(
+            "Line Sensor values:  %1.3f\r",
+            ADCRead(adc[0])
+            );
+    Printf("\n");
+    }
+}
+
+void initGPIOLineSensor(){
     if(initialized){
         return;
     }
@@ -51,7 +77,7 @@ void initGPIOLineSensor(void){
 }
 
 
-void gpioLineSensorDemo(void){
+void gpioLineSensorDemo(){
     Printf("Press any key to quit\n");
 
     //loop until key is pressed
