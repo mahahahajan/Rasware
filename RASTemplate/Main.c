@@ -29,10 +29,7 @@ int main(void) {
     right2 = InitializeServoMotor(PIN_D7, true);
 
     /* this keeps going forward 
-        SetMotor(left1, 1.0);
-        SetMotor(left2, 1.0);
-        SetMotor(right2, -1.0);
-        SetMotor(right1, -1.0);
+        
     */
 
 
@@ -48,21 +45,19 @@ int main(void) {
 
 void lineSense() {
     while(1){
-        if(ADCRead(adc[1]) > .9){
-            SetPin(PIN_F2, true);
-            Printf(
-            "Line Sensor values:  %1.3f\r",
-            ADCRead(adc[1])
-            );
-    Printf("\n");
+        if(ADCRead(adc[1]) < 0.3 || ADCRead(adc[2]) < 0.3){
+	  SetMotor(left1, -1.0);
+	  SetMotor(left2, -1.0);
+	  SetMotor(right2, -1.0);
+	  SetMotor(right1, -1.0);
         }
-        else if(ADCRead(adc[1]) > .4){
+        else {
              SetPin(PIN_F1, true);
              Printf(
             "Line Sensor values:  %1.3f\r",
             ADCRead(adc[1])
             );
-    Printf("\n");
+	    Printf("\n");
         }
 
     
