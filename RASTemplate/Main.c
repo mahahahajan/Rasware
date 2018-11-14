@@ -48,14 +48,18 @@ int main(void) {
 
 void lineSense() {
     while(1){
-        if(ADCRead(adc[1]) > .9){
+        if(ADCRead(adc[1]) > 0){
             SetPin(PIN_F2, true);
             Printf(
-            "Line Sensor values:  %1.3f\r",
-            ADCRead(adc[1])
+            "Line Sensor values: %1.3f,  %1.3f,  %1.3f\r",
+            ADCRead(adc[1]),
+            ADCRead(adc[2]),
+            ADCRead(adc[3])
             );
     Printf("\n");
         }
+
+        
         else if(ADCRead(adc[1]) > .4){
              SetPin(PIN_F1, true);
              Printf(
