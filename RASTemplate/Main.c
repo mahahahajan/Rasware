@@ -28,31 +28,43 @@ int main(void) {
     right1 = InitializeServoMotor(PIN_D6, true);
     right2 = InitializeServoMotor(PIN_D7, true);
 
+    initGPIOLineSensor();   
+    //initDistanceSensor
+
+    sumoBot();
+
     /* this keeps going forward 
         
     */
 
 
 
-    initGPIOLineSensor();
+    
 
-    lineSense();
+    //lineSense();
 
 
-    gpioLineSensorDemo();
+    //gpioLineSensorDemo();
    
 }
 
 void lineSense() {
     while(1){
-        if( (ADCRead(adc[2]) > .1 && ADCRead(adc[2]) < .4 ) || (ADCRead(adc[3]) > .1 && ADCRead(adc[3]) < .4 ) ) {
-	  SetMotor(left1, -1.0);
-	  SetMotor(left2, -1.0);
-	  SetMotor(right2, 1.0);
-	  SetMotor(right1, 1.0);
-      Printf("backwards");
-        }
+        if( ADCRead(adc[2]) > .998 ) {
+	  
 
+      Printf("forwards");
+
+      Wait(0.05);
+      
+        }
+       /* else if(ADCRead(adc[2]) > 0 && ADCRead(adc[2]) < .4  ){
+          SetMotor(left1, -1.0);
+      SetMotor(left2, -1.0);
+      SetMotor(right2, -1.0);
+      SetMotor(right1, -1.0);  
+        }
+        */
         else {
         SetMotor(left1, 0);
       SetMotor(left2, 0);
@@ -71,6 +83,60 @@ void lineSense() {
     }
 }
 
+void sumoBot(){
+    int start = 0;
+    Printf("hello");
+    Printf("\n");
+    while(1){
+       
+      
+
+       if(start == 0){
+         Straight();
+         Printf("Straight");
+         Printf("\n");
+         start = 1;
+       }
+
+       if(start > 0 ){
+
+        if( (ADCRead(adc[2]) * 100 ) < 85 ){ //// threshold for white
+            Printf("back");
+            Printf("\n");
+        }
+       } 
+
+         
+    
+    }
+    
+
+}
+
+void Straight(){
+    SetMotor(left1,  1.0);
+    SetMotor(left2,  -1.0);
+    SetMotor(right2, -1.0);
+    SetMotor(right1, 1.0);
+    Printf("Done");
+    Printf("\n");
+}
+
+void Spin() {
+    SetMotor(left1, -1.0);
+    SetMotor(left2, -1.0);
+    SetMotor(right2, -1.0);
+    SetMotor(right1, -1.0); 
+}
+
+void Back() {
+    SetMotor(left1,  -1.0);
+    SetMotor(left2,  -1.0);
+    SetMotor(right2, 1.0);
+    SetMotor(right1, 1.0);
+}
+
+
 void initGPIOLineSensor(){
     if(initialized){
         return;
@@ -78,24 +144,7 @@ void initGPIOLineSensor(){
     initialized = true;
 
     //set four pins for ADC input - you can use these 4 I/O pins or select your own
-    adc[1] = InitializeADC(PIN_D0);
-    adc[2] = InitializeADC(PIN_D1);
-    adc[3] = InitializeADC(PIN_D2);
-}
-
-
-void gpioLineSensorDemo(){
-    Printf("Press any key to quit\n");
-
-    //loop until key is pressed
-    while(!KeyWasPressed()){
-        Printf(
-            "Line Sensor values:  %1.3f,  %1.3f,  %1.3f,  %1.3f\r",
-            ADCRead(adc[0]),
-            ADCRead(adc[1]),
-            ADCRead(adc[2]),
-            ADCRead(adc[3])
-            );
-    }
-    Printf("\n");
+    
+    adc[2] = InitializeADC(PIN_E2);
+    
 }
