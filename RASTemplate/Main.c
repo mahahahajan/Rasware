@@ -45,21 +45,27 @@ int main(void) {
 
 void lineSense() {
     while(1){
-        if(ADCRead(adc[1]) < 0.3 || ADCRead(adc[2]) < 0.3){
+        if( (ADCRead(adc[2]) > .1 && ADCRead(adc[2]) < .4 ) || (ADCRead(adc[3]) > .1 && ADCRead(adc[3]) < .4 ) ) {
 	  SetMotor(left1, -1.0);
 	  SetMotor(left2, -1.0);
-	  SetMotor(right2, -1.0);
-	  SetMotor(right1, -1.0);
+	  SetMotor(right2, 1.0);
+	  SetMotor(right1, 1.0);
+      Printf("backwards");
         }
-        else {
 
+        else {
+        SetMotor(left1, 0);
+      SetMotor(left2, 0);
+      SetMotor(right2, 0);
+      SetMotor(right1, 0);
              SetPin(PIN_F1, true);
              Printf(
             "Line Sensor values:  %1.3f\r",
-            ADCRead(adc[1])
+            ADCRead(adc[2])
             );
 	    Printf("\n");
         }
+
 
     
     }
@@ -72,10 +78,9 @@ void initGPIOLineSensor(){
     initialized = true;
 
     //set four pins for ADC input - you can use these 4 I/O pins or select your own
-    adc[0] = InitializeADC(PIN_D0);
-    adc[1] = InitializeADC(PIN_D1);
-    adc[2] = InitializeADC(PIN_D2);
-    adc[3] = InitializeADC(PIN_D3);
+    adc[1] = InitializeADC(PIN_D0);
+    adc[2] = InitializeADC(PIN_D1);
+    adc[3] = InitializeADC(PIN_D2);
 }
 
 
