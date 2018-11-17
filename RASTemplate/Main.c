@@ -23,14 +23,17 @@ static tADC *adc[4];
 // The 'main' function is the entry point of the program
 int main(void) {
     // Initialization code can go here
-    left1 = InitializeServoMotor(PIN_B6, true);
-    left2 = InitializeServoMotor(PIN_B7, true);
-    right1 = InitializeServoMotor(PIN_D6, true);
-    right2 = InitializeServoMotor(PIN_D7, true);
+    
+    right1 = InitializeServoMotor(PIN_B7, true);
+    right2 = InitializeServoMotor(PIN_B6, true);
+
+    left1 = InitializeServoMotor(PIN_C6, true);
+    left2 = InitializeServoMotor(PIN_C7, true);
+    
 
     initGPIOLineSensor();   
     //initDistanceSensor
-
+    //IRSensorDemo();
     sumoBot();
 
     /* this keeps going forward 
@@ -47,7 +50,17 @@ int main(void) {
     //gpioLineSensorDemo();
    
 }
-
+void IRSensorDemo(void){
+    Printf("Press any key to quit\n");
+    
+    //loop until key is pressed
+    while(!KeyWasPressed()){
+        Printf(
+            "Line Sensor values:  %1.3f\r",
+            ADCRead(adc[1]) * 100);
+    }
+    Printf("\n");
+}
 void lineSense() {
     while(1){
         if( ADCRead(adc[2]) > .998 ) {
@@ -103,6 +116,11 @@ void sumoBot(){
         if( (ADCRead(adc[2]) * 100 ) < 85 ){ //// threshold for white
             Printf("back");
             Printf("\n");
+            Back();
+            Wait(1);
+            Spin();
+            Wait(1.5);
+            Straight();
         }
        } 
 
@@ -114,10 +132,15 @@ void sumoBot(){
 }
 
 void Straight(){
-    SetMotor(left1,  1.0);
-    SetMotor(left2,  -1.0);
+    
+    SetMotor(right1, -1.0);
     SetMotor(right2, -1.0);
-    SetMotor(right1, 1.0);
+
+    SetMotor(left1,  1.0);
+    SetMotor(left2,  1.0);
+    
+    
+    
     Printf("Done");
     Printf("\n");
 }
@@ -130,10 +153,12 @@ void Spin() {
 }
 
 void Back() {
+    
     SetMotor(left1,  -1.0);
     SetMotor(left2,  -1.0);
     SetMotor(right2, 1.0);
     SetMotor(right1, 1.0);
+    
 }
 
 
@@ -144,7 +169,8 @@ void initGPIOLineSensor(){
     initialized = true;
 
     //set four pins for ADC input - you can use these 4 I/O pins or select your own
-    
+    adc[1] = InitializeADC(PIN_E1);
     adc[2] = InitializeADC(PIN_E2);
+
     
 }
